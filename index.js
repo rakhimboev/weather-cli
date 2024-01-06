@@ -1,10 +1,15 @@
 import getArgs from "./helpers/args.js"
+import { getWeather } from "./services/api.service.js"
 import { printError, printSuccess, printHelp } from "./services/log.services.js"
-import { saveKeyValue, getKeyValue } from "./services/storage.service.js"
+import { saveKeyValue, getKeyValue, TOKEN_DICTIONARY } from "./services/storage.service.js"
 
 const saveToken = async token => {
+    if (!token.length) {
+        printError('Token does not exist')
+        return
+    }
     try {
-        await saveKeyValue('token', token)
+        await saveKeyValue(TOKEN_DICTIONARY.token, token)
         printSuccess('Token saved');
     } catch (err) {
         printError(err.message)
@@ -13,7 +18,6 @@ const saveToken = async token => {
 
 const startCLI = () => {
     const args = getArgs(process.argv)
-    console.log(args)
     if(args.h) {
         printHelp()
     }
@@ -21,8 +25,8 @@ const startCLI = () => {
         //save city
     }
     if (args.t) {
-        saveKeyValue('token', args.t)
+        return saveToken(args.t)
     }
-    //result
+    getWeather('Uzbekistan')
 }
 startCLI()
